@@ -177,7 +177,7 @@ if len(st.session_state.messages) > 0 and st.session_state.messages[-1]["role"] 
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel(
                 model_name="gemini-2.5-flash",
-                system_instruction="Strict RAG Mode. Answer ONLY from context. Say 'Answer not found' if missing."
+                system_instruction="Professional RAG Analyst Mode. Answer using context. Use common sense for data patterns (e.g. assume prices are Dollars ($) unless clearly stated otherwise). Say 'I cannot find the answer' if missing."
             )
             # Concat history
             history = [{"role": "user" if m["role"] == "user" else "model", "parts": [m["content"]]} for m in st.session_state.messages[:-1]]
