@@ -179,10 +179,15 @@ if len(st.session_state.messages) > 0 and st.session_state.messages[-1]["role"] 
                 model_name="gemini-2.5-flash",
                 system_instruction="Professional RAG Analyst Mode. Answer using context. Use common sense for data patterns (e.g. assume prices are Dollars ($) unless clearly stated otherwise). Say 'I cannot find the answer' if missing."
             )
-            # Concat history
+            
+            # History stays as just text for efficiency
             history = [{"role": "user" if m["role"] == "user" else "model", "parts": [m["content"]]} for m in st.session_state.messages[:-1]]
+            
+            # Core prompt with document data (ONLY for the latest message to save tokens)
+            currentQuery = f"Reference the following Document Context to answer: \n{st.session_state.knowledge_base}\n\nUser Question: {st.session_state.messages[-1]['content']}"
+            
             chat = model.start_chat(history=history)
-            response = chat.send_message(f"Context:\n{st.session_state.knowledge_base}\n\nQuestion: {st.session_state.messages[-1]['content']}")
+            response = chat.send_message(currentQuery, generation_config={"temperature": temperature})
             
             st.session_state.messages.append({"role": "assistant", "content": response.text})
             st.rerun()
