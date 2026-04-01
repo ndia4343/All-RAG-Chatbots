@@ -177,7 +177,7 @@ if len(st.session_state.messages) > 0 and st.session_state.messages[-1]["role"] 
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel(
                 model_name="gemini-2.5-flash",
-                system_instruction="Professional RAG Analyst Mode. Answer using context. Use common sense for data patterns (e.g. assume prices are Dollars ($) unless clearly stated otherwise). Say 'I cannot find the answer' if missing."
+                system_instruction="You are an Expert Portfolio Analyst. \n\n1. KNOWLEDGE: CarPrices.csv = UCI Dataset (USD). ecommerce_data.csv = Retail data (USD). \n\n2. RULES: \n- Professional reporting format.\n- Use Dollars ($) automatically for prices. \n- Always provide a SUMMARY TABLE if possible."
             )
             
             # History stays as just text for efficiency
