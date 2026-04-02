@@ -1,41 +1,47 @@
-# 🤖 Indigo Logic | Precision RAG Engine
+# All-RAG-Chatbots 🤖💎
 
-A professional-grade, dark-themed **Retrieval-Augmented Generation (RAG)** chatbot built to analyze local Excel, CSV, and Text files using the **Gemini 1.5 Flash** model. 
+A premium collection of high-performance **Retrieval-Augmented Generation (RAG)** chatbots, designed for portfolio-grade demonstrations and real-world utility. This repository showcases advanced AI architectures using local embeddings with FAISS and state-of-the-art LLMs.
 
-Designed for data analysts who need quick insights from local documents without complex infrastructure.
+## 🚀 Projects Included
 
-## 🚀 Live Demo (Streamlit)
-**[Link to your Streamlit App will appear here after deployment]**
+### 1. [1Mart-RAG-Bot](./1Mart-RAG-Bot)
+An intelligent E-Commerce Sales & Support Assistant.
+- **Goal:** Help users find products, check stock, and get detailed recommendations.
+- **Tech Stack:** Streamlit, FAISS, Sentence-Transformers, Google Gemini Flash API.
+- **Key Feature:** Local vector search for near-instant product lookup even with large catalogs.
 
-## ✨ Key Features
-- **Data Ingestion:** Supports `.xlsx`, `.csv`, `.txt`, and `.md` files.
-- **Contextual Memory:** Remembers the last 10 messages for deep analysis.
-- **Privacy First:** Processes documents locally before sending grounded queries to the Gemini API.
-- **Premium UI:** Custom dark-themed dashboard built with Streamlit and CSS.
-- **Parameter Control:** Real-time temperature slider to adjust AI creativity.
-
-## 🛠️ Tech Stack
-- **Frontend/App framework:** Streamlit (Python)
-- **AI Backend:** Google Gemini 1.5 Flash / 2.5 Flash
-- **Data Parsing:** Pandas & OpenPyXL
-
-## 📦 How to Run Locally
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ndia4343/Indigo-Logic-RAG.git
-   cd Indigo-Logic-RAG
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the app:
-   ```bash
-   streamlit run streamlit_app.py
-   ```
-
-## 🔐 API Configuration
-You will need a **Gemini API Key** from [Google AI Studio](https://aistudio.google.com/) to power the chat.
+### 2. [Indigo-CarPrices-Bot](./Indigo-CarPrices-Bot)
+A precision Data Analysis Explorer for the UCI Car Prices Dataset.
+- **Goal:** Provide detailed analytical insights and price predictions based on historical data.
+- **Tech Stack:** Streamlit, Pandas, Google Gemini API, Custom CSS Branding.
+- **Key Feature:** High-fidelity data ingestion and professional reporting format.
 
 ---
-Built by [Nadia](https://github.com/ndia4343) 🚀
+
+## 🛠️ Global Requirements
+
+To run any of the chatbots, ensure you have:
+- Python 3.9+
+- A Google Gemini API Key (from [Google AI Studio](https://aistudio.google.com/))
+- The following common libraries:
+  ```bash
+  pip install streamlit pandas sentence-transformers faiss-cpu google-generativeai
+  ```
+
+## 📂 Repository Structure
+
+```text
+.
+├── 1Mart-RAG-Bot/          # E-Commerce Support Chatbot
+│   ├── app.py              # Main Application
+│   ├── requirements.txt    # Project Dependencies
+│   └── ecommerce_sales.csv  # Sample Product Database
+├── Indigo-CarPrices-Bot/    # Data Analysis Engine
+│   ├── app.py              # Streamlit Interface
+│   ├── flask_app.py       # API Backend
+│   └── ...
+└── README.md               # Landing Page & Overview
+```
+
+## ✨ Created with Passion
+Designed for US clients and high-end portfolio presentations. Clean code, professional UI, and robust RAG logic.

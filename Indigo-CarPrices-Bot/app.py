@@ -120,7 +120,14 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     
     st.markdown('<p class="sidebar-label">API CONFIGURATION</p>', unsafe_allow_html=True)
-    api_key = st.text_input("Gemini API Key", type="password", label_visibility="collapsed", help="Get your key from AI Studio")
+    env_api_key = st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+    if env_api_key:
+        api_key = env_api_key
+        st.success("✅ Secure API Key found.")
+    else:
+        api_key = st.text_input("Gemini API Key", type="password", label_visibility="collapsed", help="Get your key from AI Studio")
+        if not api_key:
+            st.warning("⚠️ API key required for prediction.")
     
     st.markdown('<p class="sidebar-label">PARAMETERS</p>', unsafe_allow_html=True)
     temp = st.slider("Core Temperature", 0.0, 1.0, 0.7)

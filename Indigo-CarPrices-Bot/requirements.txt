@@ -3,3 +3,4 @@ pandas
 google-generativeai
 openpyxl
 jinja2
+python-dotenv
