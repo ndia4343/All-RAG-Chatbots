@@ -21,32 +21,38 @@ st.markdown("""
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --primary: #10b981;
-        --primary-dark: #059669;
-        --bg-dark: #0f172a;
-        --surface-dark: #1e293b;
-        --text-muted: #94a3b8;
+        --primary: #2563eb;       /* Royal Blue */
+        --primary-light: #38bdf8; /* Sky Blue */
+        --primary-dark: #1e3a8a;  /* Deep Blue */
+        --bg: #ffffff;
+        --surface: #f1f5f9;
+        --text: #0f172a;
     }
     
     .stApp {
-        background-color: var(--bg-dark);
-        color: #f1f5f9;
+        background-color: var(--bg);
+        color: var(--text);
         font-family: 'Inter', sans-serif;
     }
     
     /* Sidebar styling */
     [data-testid="stSidebar"] {
-        background-color: var(--surface-dark);
-        border-right: 1px solid #334155;
+        background-color: var(--primary-dark);
+        border-right: 1px solid #e2e8f0;
+    }
+    
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+        color: #e2e8f0; /* Ensure sidebar text is white/light on dark blue bg */
     }
     
     /* Headers */
     h1, h2, h3 {
         font-family: 'Outfit', sans-serif;
+        color: var(--primary-dark);
     }
     
     .main-title {
-        background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800;
@@ -59,25 +65,30 @@ st.markdown("""
         padding: 1.5rem;
         border-radius: 1rem;
         margin-bottom: 1rem;
-        border: 1px solid #334155;
         max-width: 85%;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     }
     
     .user-bubble {
-        background: #334155;
+        background: var(--surface);
+        color: var(--text);
         align-self: flex-end;
         margin-left: auto;
+        border: 1px solid #e2e8f0;
     }
     
     .bot-bubble {
-        background: #1e293b;
-        border-left: 4px solid var(--primary);
+        background: #ffffff;
+        color: var(--text);
+        border-left: 6px solid var(--primary-light);
+        border: 1px solid #e2e8f0;
+        border-left: 6px solid var(--primary-light);
     }
     
     /* Product card style result */
     .product-card {
-        background: rgba(16, 185, 129, 0.05);
-        border: 1px solid rgba(16, 185, 129, 0.2);
+        background: #ffffff;
+        border: 1px solid var(--primary-light);
         border-radius: 0.5rem;
         padding: 1rem;
         margin-top: 0.5rem;
@@ -87,9 +98,9 @@ st.markdown("""
         font-size: 0.7rem;
         padding: 0.2rem 0.5rem;
         border-radius: 1rem;
-        background: var(--primary-dark);
-        color: white;
-        font-weight: 600;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        font-weight: 700;
     }
 </style>
 """, unsafe_allow_html=True)
