@@ -64,7 +64,7 @@ with st.sidebar:
     api_key = st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY") or st.text_input("Gemini API Key", type="password")
     
     st.markdown("<p class='nav-label'>MODEL ENGINE</p>", unsafe_allow_html=True)
-    model_choice = st.selectbox("Preferred Engine:", ["gemini-1.5-flash", "gemini-1.0-pro"], help="Switch if you see 404 errors.")
+    model_choice = st.selectbox("Preferred Engine:", ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp"], help="Select the model to power the assistant.")
 
 # --- MAIN INTERFACE ---
 st.markdown('<div class="header-container"><div class="header-title">ShopBot AI Concierge</div><div style="font-size:0.8rem;">🔌 Database Connected</div></div>', unsafe_allow_html=True)
@@ -88,20 +88,12 @@ if prompt := st.chat_input("Enter your query..."):
         if api_key:
             try:
                 genai.configure(api_key=api_key)
-                # First try the user's preferred model
-                try:
-                    model = genai.GenerativeModel(model_choice)
-                    sys_inst = f"Expert E-Commerce Data Analyst. Inventory Value: ${global_stats['Total_Value']}. Context: {context_matches}"
-                    response = model.generate_content(f"{sys_inst}\n\nUSER: {prompt}")
-                    ans = response.text
-                except Exception as inner_e:
-                    # Fallback to stable version if Flash 1.5 404s
-                    fallback_model = "gemini-1.0-pro"
-                    model = genai.GenerativeModel(fallback_model)
-                    response = model.generate_content(f"CONTEXT: {context_matches} | USER: {prompt}")
-                    ans = response.text + f"\n\n*(Note: Fallback to {fallback_model} used due to API availability)*"
+                model = genai.GenerativeModel(model_choice)
+                sys_inst = f"Expert E-Commerce Data Analyst. Inventory Value: ${global_stats['Total_Value']}. Context: {context_matches}"
+                response = model.generate_content(f"{sys_inst}\n\nUSER: {prompt}")
+                ans = response.text
             except Exception as e:
-                ans = f"⚠️ Recovery Error: {e}"
+                ans = f"⚠️ Error: {e}. Try selecting a different model engine in the sidebar."
         else:
             ans = f"Search Context Found:\n{context_matches}\n\n(Tip: Enter API Key for full AI reasoning!)"
             

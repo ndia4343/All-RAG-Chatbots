@@ -7,13 +7,13 @@ The **Indigo-CarPrices-Bot** is a precision Data Analysis Engine for the UCI Car
 - **Knowledge-Driven:** Ingests CSV/Excel data to answer complex analytical questions.
 - **Reporting Format:** Optimized for professional summary tables and detailed predictions.
 - **Enhanced Design:** Uses custom CSS injection for a high-end, dark-themed dashboard.
-- **Context-Aware:** Leverages **Google Gemini 2.5 Flash** for deep understanding of data trends.
+- **Context-Aware:** Leverages **Google Gemini 1.5 Flash** for deep understanding of data trends.
 
 ## 🛠️ Technical Stack
 
 - **Framework:** Streamlit (Main App), Flask (Backend/API)
 - **Data Handling:** Pandas, NumPy
-- **LLM:** Google Gemini 2.5 Flash (API-based)
+- **LLM:** Google Gemini 1.5 Flash (API-based)
 - **Styling:** Custom CSS, Material Symbols, Inter Font
 
 ## 📦 Requirements

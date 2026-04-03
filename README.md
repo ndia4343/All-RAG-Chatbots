@@ -44,4 +44,4 @@ To run any of the chatbots, ensure you have:
 ```
 
 ## ✨ Created with Passion
-Designed for US clients and high-end portfolio presentations. Clean code, professional UI, and robust RAG logic.
+Designed for high-end portfolio presentations and real-world utility. Clean code, professional UI, and robust RAG logic.
