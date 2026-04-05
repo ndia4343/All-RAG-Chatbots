@@ -411,6 +411,11 @@ with col_chat:
                                 top_prods = df['products'].value_counts().head(3).index.tolist()
                                 analytical_facts.append(f"The most popular products are: {', '.join(top_prods)}.")
                                 
+                        if "product" in lower_input and any(kw in lower_input for kw in ["available", "list", "what", "which"]):
+                            if 'products' in df.columns:
+                                unique_products = df['products'].dropna().unique().tolist()
+                                analytical_facts.append(f"We Currently offer the following products: {', '.join(map(str, unique_products))}.")
+                                
                         if any(kw in lower_input for kw in ['total', 'sum', 'count', 'how many', 'revenue', 'customers', 'orders']):
                             if 'country' in df.columns:
                                 for country in df['country'].dropna().unique():
@@ -443,8 +448,8 @@ with col_chat:
                 
                 # We skip LLM generation if we have a direct, perfectly formatted analytical fact that completely answers a list-type question,
                 # as FLAN-T5-base struggles heavily with repeating facts properly without tautologies.
-                if analytical_facts and ("top" in lower_input or "popular" in lower_input or "summary" in lower_input):
-                    ans = "\\n\\n".join(analytical_facts)
+                if analytical_facts and any(k in lower_input for k in ["top", "popular", "summary", "available", "list", "total", "sum", "count", "how many"]):
+                    ans = "📊 **Dashboard Insights:**\\n" + "\\n\\n".join(analytical_facts)
                 else:
                     prompt = f"Answer the customer's question using ONLY the provided context.\\nContext:\\n{prompt_ctx}\\nQuestion: {user_input}\\nAnswer:"
                     inputs = st.session_state.tok(prompt, return_tensors='pt', max_length=512, truncation=True)
