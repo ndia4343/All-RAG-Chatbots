@@ -2,11 +2,52 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import os
+import re
 import torch
 import faiss
 from sentence_transformers import SentenceTransformer
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 from io import BytesIO
+
+def try_math(query: str):
+    """Detect simple arithmetic in query and compute directly."""
+    q = query.lower().strip()
+    numbers = re.findall(r"\d+(?:[,\d]*)?(?:\.\d+)?", q.replace(",", ""))
+    nums = [float(n) for n in numbers if n]
+
+    if not nums: return None
+
+    if any(k in q for k in ["sum", "total", "add", "plus", "+"]) and "revenue" not in q and "products" not in q:
+        result = sum(nums)
+        return f"The total is ${result:,.2f}" if len(nums) > 1 else None
+    if any(k in q for k in ["multiply", "times", "product", "*", "×"]) and "popular product" not in q:
+        result = nums[0]
+        for n in nums[1:]: result *= n
+        return f"The result is ${result:,.2f}"
+    if any(k in q for k in ["subtract", "minus", "difference", "-"]):
+        result = nums[0] - sum(nums[1:])
+        return f"The result is ${result:,.2f}"
+    if any(k in q for k in ["divide", "divided by", "/"]):
+        if len(nums) >= 2 and nums[1] != 0:
+            result = nums[0] / nums[1]
+            return f"The result is {result:,.4f}"
+    if any(k in q for k in ["average", "avg", "mean"]):
+        result = sum(nums) / len(nums)
+        return f"The average is ${result:,.2f}"
+    if "%" in q or "percent" in q:
+        if len(nums) >= 2:
+            result = (nums[0] / nums[1]) * 100
+            return f"{result:.2f}%"
+    return None
+
+def format_currency_in_answer(text: str) -> str:
+    """Adds $ before bare numbers near revenue/price/value keywords."""
+    text = re.sub(
+        r"(?i)(revenue|price|cost|value|total|amount|order)[\s:]*([\$£€]?)(\d[\d,]*(?:\.\d{1,2})?)",
+        lambda m: f"{m.group(1)} ${m.group(3)}" if not m.group(2) else m.group(0),
+        text
+    )
+    return text
 
 st.set_page_config(page_title="1Mart | ShopAI", page_icon="🛒", layout="wide")
 
@@ -385,8 +426,12 @@ with col_chat:
         st.session_state.messages.append({"role": "user", "content": user_input, "time": "09:01"})
         
         lower_input = user_input.lower()
+        
+        math_answer = try_math(lower_input)
+        if math_answer:
+            ans = math_answer
         # Mock answers for exact screenshot match
-        if "vr headset" in lower_input:
+        elif "vr headset" in lower_input:
             ans = "The VR Headset is priced at $499.00 per unit. Multiple customers across India, Germany, and the UK have purchased it — it's one of our top selling electronics!"
         elif "most orders" in lower_input and not "how many" in lower_input:
             ans = "Based on our dataset, India has the highest number of orders, followed by the UK and Germany."
@@ -474,6 +519,7 @@ with col_chat:
                     with torch.no_grad():
                         out = st.session_state.llm.generate(**inputs, max_new_tokens=150)
                     ans = st.session_state.tok.decode(out[0], skip_special_tokens=True).strip()
+                    ans = format_currency_in_answer(ans)
                     if analytical_facts:
                         ans = "📊 **Dashboard Insights:**\\n" + "\\n".join(analytical_facts) + "\\n\\n" + ans
                     if not ans or ans == "I don't have that information.":
