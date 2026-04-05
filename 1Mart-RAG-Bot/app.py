@@ -193,7 +193,7 @@ st.markdown("""
 
 # --- Load Models & Default Data ---
 @st.cache_resource(show_spinner="Loading AI Models and Knowledge Base...")
-def load_models_and_data():
+def load_models_and_data_v2():
     device = "cpu"
     # To reduce the footprint for Streamlit, using lightweight or same models referenced
     embedder = SentenceTransformer("all-MiniLM-L6-v2")
@@ -232,7 +232,7 @@ if "models" not in st.session_state:
     
 def ensure_models():
     if not st.session_state.models_loaded:
-        st.session_state.emb, st.session_state.tok, st.session_state.llm, def_chunks, def_idx, def_df = load_models_and_data()
+        st.session_state.emb, st.session_state.tok, st.session_state.llm, def_chunks, def_idx, def_df = load_models_and_data_v2()
         if def_chunks and def_idx:
             st.session_state.chunks = def_chunks
             st.session_state.index = def_idx
