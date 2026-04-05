@@ -398,39 +398,57 @@ with col_chat:
                 if hasattr(st.session_state, 'df') and st.session_state.df is not None:
                     try:
                         df = st.session_state.df
-                        # Simple rule-based Pandas aggregator
+                        # Dynamic column mapper for user uploads
+                        col_cust = next((c for c in df.columns if any(k in c for k in ['customer', 'name', 'client', 'buyer'])), None)
+                        col_prod = next((c for c in df.columns if any(k in c for k in ['product', 'item', 'category', 'goods'])), None)
+                        col_rev = next((c for c in df.columns if any(k in c for k in ['sales', 'revenue', 'value', 'price', 'total', 'amount'])), None)
+                        col_country = next((c for c in df.columns if any(k in c for k in ['country', 'region', 'state', 'location', 'city'])), None)
                         
-                        if "top customer" in lower_input:
-                            if 'customer_name' in df.columns:
-                                top_custs = df['customer_name'].value_counts().head(3)
+                        if "top" in lower_input and "customer" in lower_input:
+                            if col_cust:
+                                top_custs = df[col_cust].value_counts().head(3)
                                 top_str = ", ".join(f"{name} ({count} orders)" for name, count in top_custs.items())
                                 analytical_facts.append(f"Our top customers are: {top_str}.")
                                 
-                        if "popular product" in lower_input or "top product" in lower_input:
-                            if 'products' in df.columns:
-                                top_prods = df['products'].value_counts().head(3).index.tolist()
-                                analytical_facts.append(f"The most popular products are: {', '.join(top_prods)}.")
+                        if "popular" in lower_input or "top product" in lower_input:
+                            if col_prod:
+                                top_prods = df[col_prod].value_counts().head(3).index.tolist()
+                                analytical_facts.append(f"The most popular products are: {', '.join(str(x) for x in top_prods)}.")
                                 
                         if "product" in lower_input and any(kw in lower_input for kw in ["available", "list", "what", "which"]):
-                            if 'products' in df.columns:
-                                unique_products = df['products'].dropna().unique().tolist()
-                                analytical_facts.append(f"We Currently offer the following products: {', '.join(map(str, unique_products))}.")
+                            if col_prod:
+                                unique_products = df[col_prod].dropna().unique().tolist()
+                                if len(unique_products) < 20:
+                                    analytical_facts.append(f"We currently offer the following products: {', '.join(map(str, unique_products))}.")
+                                else:
+                                    analytical_facts.append(f"We offer over {len(unique_products)} different products.")
+                                    
+                        if "how many products" in lower_input or "count products" in lower_input:
+                            if col_prod:
+                                analytical_facts.append(f"There are {df[col_prod].nunique()} unique products in the catalog.")
+
+                        # Overall revenue
+                        if ("revenue" in lower_input or "total sales" in lower_input or "total sum" in lower_input) and "country" not in lower_input:
+                            if col_rev:
+                                val = pd.to_numeric(df[col_rev], errors='coerce').sum()
+                                analytical_facts.append(f"The total overall revenue/sales is ${val:,.2f}.")
                                 
                         if any(kw in lower_input for kw in ['total', 'sum', 'count', 'how many', 'revenue', 'customers', 'orders']):
-                            if 'country' in df.columns:
-                                for country in df['country'].dropna().unique():
+                            if col_country:
+                                for country in df[col_country].dropna().unique():
                                     if str(country).lower() in lower_input:
-                                        c_df = df[df['country'].astype(str).str.contains(str(country), case=False, na=False)]
+                                        c_df = df[df[col_country].astype(str).str.contains(str(country), case=False, na=False)]
                                         if 'count' in lower_input or 'customers' in lower_input or 'how many' in lower_input:
                                             analytical_facts.append(f"There are {len(c_df)} total customer orders in {country}.")
                                         if 'sum' in lower_input or 'total' in lower_input or 'revenue' in lower_input:
-                                            if 'order_value' in df.columns:
-                                                val = pd.to_numeric(c_df['order_value'], errors='coerce').sum()
+                                            if col_rev:
+                                                val = pd.to_numeric(c_df[col_rev], errors='coerce').sum()
                                                 analytical_facts.append(f"The total revenue for {country} is ${val:,.2f}.")
-                            if "sum by country" in lower_input or "total by country" in lower_input or "revenue by country" in lower_input:
-                                if 'order_value' in df.columns and 'country' in df.columns:
-                                    summary = df.groupby('country')['order_value'].apply(lambda x: pd.to_numeric(x, errors='coerce').sum()).to_dict()
-                                    analytical_facts.append(f"Here is the total revenue by country: {summary}.")
+                            if "sum by" in lower_input or "total by" in lower_input or "revenue by" in lower_input:
+                                if col_rev and col_country:
+                                    summary = df.groupby(col_country)[col_rev].apply(lambda x: pd.to_numeric(x, errors='coerce').sum())
+                                    summary_str = ", ".join([f"{k}: ${v:,.2f}" for k, v in summary.items()])
+                                    analytical_facts.append(f"Here is the data breakdown: {summary_str}.")
                     except Exception as e:
                         print("Pandas Router Error:", e)
 
